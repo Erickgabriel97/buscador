@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pergunta</title>
+    <style>
+        body {
+            background-image: url('https://i.pinimg.com/originals/e4/91/f1/e491f1d02f8353d68bf173fc97f290f4.jpg'); /* Insira a URL da imagem de fundo */
+            background-size: cover;
+            color: black; /* Cor do texto */
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: rise 2s forwards;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Você ama o Erick?</h1>
+    <form id="responseForm" action="/resposta" method="POST">
+        <button type="submit" name="resposta" value="sim" onclick="showHearts()">Sim</button>
+        <button type="submit" name="resposta" value="nao" style="pointer-events: none;">Não</button>
+    </form>
+
+    <script>
+        function showHearts() {
+            const heartCount = 30; // Número de corações a serem gerados
+            const container = document.body;
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw'; // Largura aleatória da tela
+                heart.style.animationDelay = Math.random() * 2 + 's'; // Atraso aleatório para animação
+
+                container.appendChild(heart);
+                // Remove o coração após a animação
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
