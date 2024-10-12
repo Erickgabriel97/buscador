@@ -1,106 +1,110 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surpresa de Amor</title>
-    <style>
-        body {
-            text-align: center;
-            background-image: url('/static/images/stitch_background.jpg'); /* Caminho para a imagem */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: black; /* Alterado para preto */
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            margin-top: 50px;
-            font-size: 36px;
-        }
-        #nome {
-            padding: 10px;
-            font-size: 18px;
-            margin-top: 20px;
-        }
-        #pergunta, #mensagem {
-            display: none;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            margin: 10px;
-            cursor: pointer;
-        }
-        .hearts {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            font-size: 24px;
-            color: pink;
-            animation: subir 5s infinite;
-        }
-        @keyframes subir {
-            0% { bottom: 0; }
-            100% { bottom: 100%; opacity: 0; }
-        }
-        #naoBtn {
-            position: absolute;
-        }
-    </style>
-</head>
-<body>
-    <h1>Olá, bem-vinda!</h1>
-    <input type="text" id="nome" placeholder="Digite seu nome completo">
-    <button onclick="verificarNome()">Entrar</button>
+from flask import Flask, render_template_string, request
+import os
 
-    <div id="pergunta">
-        <h2>Você ama o Erick?</h2>
-        <button onclick="mostrarMensagem()">Sim</button>
-        <button id="naoBtn" onclick="moverBotao()">Não</button>
-    </div>
+app = Flask(__name__)
 
-    <div id="mensagem">
-        <h2>Eu te amo, minha vida!</h2>
-    </div>
-
-    <script>
-        function verificarNome() {
-            const nome = document.getElementById('nome').value;
-            fetch('/verificar_nome', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome: nome })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('pergunta').style.display = 'block';
-                } else {
-                    alert("Nome incorreto! Tente novamente.");
-                }
-            });
-        }
-
-        function moverBotao() {
-            const btn = document.getElementById('naoBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-            btn.style.left = `${x}px`;
-            btn.style.top = `${y}px`;
-        }
-
-        function mostrarMensagem() {
-            document.getElementById('mensagem').style.display = 'block';
-            for (let i = 0; i < 20; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'hearts';
-                heart.innerHTML = '❤️';
-                heart.style.left = `${Math.random() * 100}vw`;
-                heart.style.animationDelay = `${Math.random() * 2}s`;
-                document.body.appendChild(heart);
+# Página inicial com a pergunta
+@app.route('/')
+def home():
+    return render_template_string("""
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Meu Aplicativo</title>
+        <style>
+            body {
+                background-image: url('https://i.pinimg.com/originals/e4/91/f1/e491f1d02f8353d68bf173fc97f290f4.jpg'); /* Coloque a URL da imagem de fundo aqui */
+                background-size: cover;
+                color: black; /* Muda a cor do texto para preto */
+                text-align: center;
+                padding: 50px;
+                font-family: Arial, sans-serif;
             }
-        }
-    </script>
-</body>
-</html>
+        </style>
+    </head>
+    <body>
+        <h1>Olá, bem-vinda ao meu aplicativo!</h1>
+        <p>Você ama o Erick?</p>
+        <form method="POST" action="/resposta">
+            <button name="resposta" value="sim">Sim</button>
+            <button name="resposta" value="nao">Não</button>
+        </form>
+    </body>
+    </html>
+    """)
+
+# Rota para lidar com a resposta
+@app.route('/resposta', methods=['POST'])
+def resposta():
+    resposta = request.form['resposta']
+    if resposta == 'sim':
+        return render_template_string("""
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Resposta Correta</title>
+            <style>
+                body {
+                    background-color: #f0f0f0;
+                    color: black;
+                    text-align: center;
+                    padding: 50px;
+                    font-family: Arial, sans-serif;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Eu te amo!</h1>
+            <p>Corações subindo...</p>
+            <script>
+                // Simulação de corações subindo
+                for (let i = 0; i < 10; i++) {
+                    let heart = document.createElement('div');
+                    heart.innerHTML = '❤️';
+                    heart.style.position = 'absolute';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.bottom = '0';
+                    document.body.appendChild(heart);
+                    // Animação dos corações
+                    setTimeout(() => {
+                        heart.style.transition = 'transform 2s';
+                        heart.style.transform = 'translateY(-100vh)';
+                        setTimeout(() => heart.remove(), 2000);
+                    }, 100);
+                }
+            </script>
+        </body>
+        </html>
+        """)
+    else:
+        return render_template_string("""
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Resposta Incorreta</title>
+            <style>
+                body {
+                    background-color: #f0f0f0;
+                    color: black;
+                    text-align: center;
+                    padding: 50px;
+                    font-family: Arial, sans-serif;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Resposta errada! Tente novamente.</h1>
+            <a href="/">Voltar</a>
+        </body>
+        </html>
+        """)
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
