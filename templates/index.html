@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surpresa de Amor</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('/static/images/stitch_background.jpg'); /* Caminho para a imagem */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: black; /* Alterado para preto */
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-top: 50px;
+            font-size: 36px;
+        }
+        #nome {
+            padding: 10px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #pergunta, #mensagem {
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .hearts {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            font-size: 24px;
+            color: pink;
+            animation: subir 5s infinite;
+        }
+        @keyframes subir {
+            0% { bottom: 0; }
+            100% { bottom: 100%; opacity: 0; }
+        }
+        #naoBtn {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h1>Olá, bem-vinda!</h1>
+    <input type="text" id="nome" placeholder="Digite seu nome completo">
+    <button onclick="verificarNome()">Entrar</button>
+
+    <div id="pergunta">
+        <h2>Você ama o Erick?</h2>
+        <button onclick="mostrarMensagem()">Sim</button>
+        <button id="naoBtn" onclick="moverBotao()">Não</button>
+    </div>
+
+    <div id="mensagem">
+        <h2>Eu te amo, minha vida!</h2>
+    </div>
+
+    <script>
+        function verificarNome() {
+            const nome = document.getElementById('nome').value;
+            fetch('/verificar_nome', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome: nome })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('pergunta').style.display = 'block';
+                } else {
+                    alert("Nome incorreto! Tente novamente.");
+                }
+            });
+        }
+
+        function moverBotao() {
+            const btn = document.getElementById('naoBtn');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
+        }
+
+        function mostrarMensagem() {
+            document.getElementById('mensagem').style.display = 'block';
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'hearts';
+                heart.innerHTML = '❤️';
+                heart.style.left = `${Math.random() * 100}vw`;
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                document.body.appendChild(heart);
+            }
+        }
+    </script>
+</body>
+</html>
