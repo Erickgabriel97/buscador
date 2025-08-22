@@ -2,7 +2,7 @@ from flask import Flask, request, render_template_string
 from serpapi import GoogleSearch
 import pandas as pd
 
-API_KEY = "663c2ffa0c2bd96c493bdc24b9e61e6355da514dfc0e2c6cc0726b01dfb1f7a"
+API_KEY = "f663c2ffa0c2bd96c493bdc24b9e61e6355da514dfc0e2c6cc0726b01dfb1f7a"
 
 app = Flask(__name__)  # precisa estar fora de qualquer função ou bloco
 
